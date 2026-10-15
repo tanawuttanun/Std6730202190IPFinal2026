@@ -9,8 +9,9 @@ Std6730202190IPFinal2026
 ├── backend                        Express.js REST API
 │   ├── .env.example               optional settings (copy to .env)
 │   ├── database/schema.sql        MySQL table + seed data (for phpMyAdmin)
+│   ├── server.js                  entry point (node server.js) -> src/server.js
 │   ├── src
-│   │   ├── server.js              entry point: picks storage, starts HTTP server
+│   │   ├── server.js              picks storage, starts HTTP server
 │   │   ├── app.js                 Express app (middleware, routes, error handling)
 │   │   ├── config/                reads .env, constants (login, limits)
 │   │   ├── routes/                URL -> controller mapping
@@ -59,6 +60,20 @@ Without a `backend/.env` file the API keeps data in an in-memory array, as requi
 If MySQL cannot be reached (wrong password, port 3306 blocked, ...) the server logs a warning and
 **falls back to in-memory** so it still starts. Set `DB_REQUIRED=true` to stop instead.
 `GET /api/health` shows which storage is in use. `backend/.env` is git-ignored — never commit passwords.
+
+### Optional: run the backend on the course server (with MySQL)
+
+The course server gives each student a shell (`ssh -p 2222 <user>@119.59.102.161`), a workspace `/app`
+and a backend port (here **3020**). MySQL is on the same machine, so `DB_HOST=localhost` works there.
+
+1. Upload the **contents** of `backend/` (not `node_modules`) to `/app` with FileZilla
+   (SFTP, host `119.59.102.161`, port `2222`).
+2. In the SSH shell create `/app/.env` with `PORT=3020`, `DB_HOST=localhost`, `DB_USER`, `DB_PASSWORD`,
+   `DB_NAME`, `DB_TABLE` (see `.env.example`).
+3. `cd /app && npm ci && node server.js` → log shows `Storage: MySQL ...`.
+4. Check `http://119.59.102.161:3020/api/health` → `{"storage":"mysql"}`.
+5. Start the app against it: `EXPO_PUBLIC_API_URL=http://119.59.102.161:3020 npx expo start -c`
+   (PowerShell: `$env:EXPO_PUBLIC_API_URL='http://119.59.102.161:3020'; npx expo start -c`).
 
 ## 2. Run the frontend (Expo Go)
 

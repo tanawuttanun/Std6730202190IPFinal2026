@@ -1,11 +1,11 @@
 {
   "name": "hr-manager-backend",
   "version": "1.0.0",
-  "description": "HR Manager & Salary Analytics System - Express.js REST API (in-memory)",
-  "main": "src/server.js",
+  "description": "HR Manager & Salary Analytics System - Express.js REST API",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
     "test": "node --test tests/api.test.js"
   },
   "dependencies": {
