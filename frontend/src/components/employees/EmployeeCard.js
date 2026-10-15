@@ -1,5 +1,7 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../constants/theme';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, gradients } from '../../constants/theme';
+import { PressableScale } from '../common/Motion';
 import { formatMoney } from '../../utils/format';
 
 export default function EmployeeCard({ employee, busy, onToggle, onDelete }) {
@@ -8,16 +10,16 @@ export default function EmployeeCard({ employee, busy, onToggle, onDelete }) {
   return (
     <View style={styles.card}>
       <View style={styles.topRow}>
-        <View style={styles.avatar}>
+        <LinearGradient colors={active ? gradients.primary : ['#6B5B2E', '#4A3F22']} style={styles.avatar}>
           <Text style={styles.avatarText}>{(employee.name || '?').trim().charAt(0).toUpperCase()}</Text>
-        </View>
+        </LinearGradient>
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={1}>{employee.name}</Text>
           <Text style={styles.position} numberOfLines={1}>{employee.position}</Text>
         </View>
-        <View style={[styles.badge, { backgroundColor: active ? '#14532D' : '#78350F' }]}>
+        <View style={[styles.badge, { backgroundColor: active ? 'rgba(52,211,153,0.14)' : 'rgba(251,191,36,0.14)' }]}>
           <View style={[styles.dot, { backgroundColor: active ? colors.success : colors.warning }]} />
-          <Text style={[styles.badgeText, { color: active ? '#86EFAC' : '#FCD34D' }]}>{employee.status}</Text>
+          <Text style={[styles.badgeText, { color: active ? colors.success : colors.warning }]}>{employee.status}</Text>
         </View>
       </View>
 
@@ -32,18 +34,12 @@ export default function EmployeeCard({ employee, busy, onToggle, onDelete }) {
             <ActivityIndicator color={colors.primary} style={{ marginRight: 12 }} />
           ) : (
             <>
-              <Pressable
-                style={({ pressed }) => [styles.btn, styles.toggleBtn, pressed && styles.pressed]}
-                onPress={() => onToggle(employee)}
-              >
-                <Text style={styles.btnText}>Toggle Status</Text>
-              </Pressable>
-              <Pressable
-                style={({ pressed }) => [styles.btn, styles.deleteBtn, pressed && styles.pressed]}
-                onPress={() => onDelete(employee)}
-              >
-                <Text style={[styles.btnText, { color: '#FCA5A5' }]}>Delete</Text>
-              </Pressable>
+              <PressableScale style={[styles.btn, styles.toggleBtn]} onPress={() => onToggle(employee)}>
+                <Text style={styles.btnText}>⇄ Toggle Status</Text>
+              </PressableScale>
+              <PressableScale style={[styles.btn, styles.deleteBtn]} onPress={() => onDelete(employee)}>
+                <Text style={[styles.btnText, { color: colors.danger }]}>🗑 Delete</Text>
+              </PressableScale>
             </>
           )}
         </View>
@@ -55,9 +51,9 @@ export default function EmployeeCard({ employee, busy, onToggle, onDelete }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: colors.border,
   },
@@ -66,12 +62,11 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: colors.surfaceAlt,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
-  avatarText: { color: colors.primary, fontWeight: '800', fontSize: 18 },
+  avatarText: { color: '#fff', fontWeight: '800', fontSize: 18 },
   info: { flex: 1, marginRight: 8 },
   name: { color: colors.text, fontSize: 16, fontWeight: '700' },
   position: { color: colors.textMuted, fontSize: 13, marginTop: 2 },
@@ -90,9 +85,8 @@ const styles = StyleSheet.create({
   salaryLabel: { color: colors.textMuted, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 },
   salary: { color: colors.text, fontSize: 18, fontWeight: '800', marginTop: 2 },
   actions: { flexDirection: 'row', alignItems: 'center' },
-  btn: { borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, marginLeft: 8 },
+  btn: { borderRadius: 10, paddingHorizontal: 12, paddingVertical: 9, marginLeft: 8 },
   toggleBtn: { backgroundColor: colors.surfaceAlt },
-  deleteBtn: { backgroundColor: '#450A0A' },
-  pressed: { opacity: 0.7 },
+  deleteBtn: { backgroundColor: 'rgba(248,113,113,0.12)' },
   btnText: { color: colors.text, fontSize: 13, fontWeight: '600' },
 });

@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
+import GradientButton from '../common/GradientButton';
 import { colors } from '../../constants/theme';
+import { showAlert } from '../../utils/alert';
 import { MAX_TEXT_LENGTH, parseSalary, validateEmployee } from '../../utils/validation';
 
 export default function AddEmployeeForm({ onSubmit }) {
@@ -16,7 +18,7 @@ export default function AddEmployeeForm({ onSubmit }) {
     const error = validateEmployee({ name, position, salary });
     if (error) {
       // Prevent submission: request is never sent to the API.
-      Alert.alert('Invalid input', error);
+      showAlert('Invalid input', error);
       return;
     }
 
@@ -68,13 +70,7 @@ export default function AddEmployeeForm({ onSubmit }) {
         keyboardType="numeric"
         maxLength={15}
       />
-      <Pressable
-        style={({ pressed }) => [styles.button, (pressed || submitting) && { backgroundColor: colors.primaryDark }]}
-        onPress={handleSubmit}
-        disabled={submitting}
-      >
-        {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>+ Add Employee</Text>}
-      </Pressable>
+      <GradientButton title="+  Add Employee" onPress={handleSubmit} loading={submitting} />
     </View>
   );
 }
@@ -82,24 +78,22 @@ export default function AddEmployeeForm({ onSubmit }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
+    borderRadius: 20,
+    padding: 18,
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: 16,
   },
-  title: { color: colors.text, fontSize: 17, fontWeight: '700', marginBottom: 10 },
+  title: { color: colors.text, fontSize: 17, fontWeight: '800', marginBottom: 12 },
   input: {
     backgroundColor: colors.bg,
     color: colors.text,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     fontSize: 15,
     marginBottom: 10,
   },
-  button: { backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 12, alignItems: 'center' },
-  buttonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });

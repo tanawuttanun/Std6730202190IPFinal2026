@@ -1,10 +1,7 @@
 import { useRef, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -12,8 +9,12 @@ import {
 } from 'react-native';
 import { api, setAuthToken } from '../services/api';
 import { API_URL } from '../config/api';
-import { colors } from '../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, gradients, shadow } from '../constants/theme';
+import GradientButton from '../components/common/GradientButton';
+import { FadeInView } from '../components/common/Motion';
 import { validateLogin } from '../utils/validation';
+import { showAlert } from '../utils/alert';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -25,7 +26,7 @@ export default function LoginScreen({ navigation }) {
     if (loadingRef.current) return;
     const error = validateLogin({ username, password });
     if (error) {
-      Alert.alert('Missing information', error);
+      showAlert('Missing information', error);
       return;
     }
 
@@ -39,7 +40,7 @@ export default function LoginScreen({ navigation }) {
       // replace: the user cannot go "back" to the login screen without logging out
       navigation.replace('Dashboard');
     } catch (e) {
-      Alert.alert(
+      showAlert(
         'Login failed',
         e.status === 401 ? 'Invalid username or password.' : e.message
       );
@@ -54,15 +55,19 @@ export default function LoginScreen({ navigation }) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <View style={styles.header}>
-        <View style={styles.logo}>
+      <LinearGradient colors={gradients.hero} style={StyleSheet.absoluteFill} />
+      <View style={styles.inner}>
+      <FadeInView style={styles.header}>
+        <LinearGradient colors={gradients.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.logo}>
           <Text style={styles.logoText}>HR</Text>
-        </View>
+        </LinearGradient>
         <Text style={styles.title}>HR Manager</Text>
         <Text style={styles.subtitle}>Employee & Salary Analytics System</Text>
-      </View>
+      </FadeInView>
 
-      <View style={styles.card}>
+      <FadeInView delay={150} style={styles.card}>
+        <Text style={styles.cardTitle}>Welcome back 👋</Text>
+        <Text style={styles.cardSubtitle}>Sign in to manage your team</Text>
         <Text style={styles.label}>Username</Text>
         <TextInput
           style={styles.input}
@@ -88,28 +93,23 @@ export default function LoginScreen({ navigation }) {
           onSubmitEditing={handleLogin}
         />
 
-        <Pressable
-          style={({ pressed }) => [styles.button, (pressed || loading) && styles.buttonPressed]}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Log in</Text>}
-        </Pressable>
-      </View>
+        <GradientButton title="Log in" onPress={handleLogin} loading={loading} style={{ marginTop: 24 }} />
+      </FadeInView>
 
       <Text style={styles.footer}>API: {API_URL}</Text>
+      </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg, justifyContent: 'center', padding: 24 },
+  container: { flex: 1, backgroundColor: colors.bg, justifyContent: 'center' },
+  inner: { padding: 24, width: '100%', maxWidth: 440, alignSelf: 'center' },
   header: { alignItems: 'center', marginBottom: 32 },
   logo: {
     width: 72,
     height: 72,
-    borderRadius: 20,
-    backgroundColor: colors.primary,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
@@ -119,30 +119,24 @@ const styles = StyleSheet.create({
   subtitle: { color: colors.textMuted, fontSize: 14, marginTop: 6 },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 24,
+    padding: 22,
+    ...shadow,
     borderWidth: 1,
     borderColor: colors.border,
   },
+  cardTitle: { color: colors.text, fontSize: 20, fontWeight: '800' },
+  cardSubtitle: { color: colors.textMuted, fontSize: 13, marginTop: 4, marginBottom: 8 },
   label: { color: colors.textMuted, fontSize: 13, marginBottom: 6, marginTop: 8, fontWeight: '600' },
   input: {
     backgroundColor: colors.bg,
     color: colors.text,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
   },
-  button: {
-    backgroundColor: colors.primary,
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  buttonPressed: { backgroundColor: colors.primaryDark },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   footer: { color: colors.textMuted, fontSize: 11, textAlign: 'center', marginTop: 24 },
 });
