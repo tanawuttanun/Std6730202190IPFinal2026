@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   tabWrap: { flex: 1 },
   tab: { borderRadius: radius.sm, paddingVertical: 10, alignItems: 'center' },
   tabText: { color: colors.textMuted, fontWeight: '700' },
-  tabTextActive: { color: '#fff', fontWeight: '800' },
+  tabTextActive: { color: colors.pillInk, fontWeight: '800' },
   kpiGrid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -5, marginBottom: 7 },
   sectionTitle: { color: colors.text, fontSize: 17, fontWeight: '800', marginBottom: 12, marginTop: 4 },
   searchBox: {

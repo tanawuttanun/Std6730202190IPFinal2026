@@ -2,21 +2,28 @@ import { useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
+  useWindowDimensions,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { api, setAuthToken } from '../services/api';
 import { API_URL } from '../config/api';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors, gradients, shadow } from '../constants/theme';
-import GradientButton from '../components/common/GradientButton';
-import { FadeInView } from '../components/common/Motion';
+import { colors } from '../constants/theme';
 import { validateLogin } from '../utils/validation';
 import { showAlert } from '../utils/alert';
+import GradientButton from '../components/common/GradientButton';
+import BrandMark from '../components/common/BrandMark';
+import VideoBackground from '../components/common/VideoBackground';
+import { FadeInView } from '../components/common/Motion';
 
 export default function LoginScreen({ navigation }) {
+  const { width } = useWindowDimensions();
+  const wide = width >= 900;
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,103 +47,109 @@ export default function LoginScreen({ navigation }) {
       // replace: the user cannot go "back" to the login screen without logging out
       navigation.replace('Dashboard');
     } catch (e) {
-      showAlert(
-        'Login failed',
-        e.status === 401 ? 'Invalid username or password.' : e.message
-      );
+      showAlert('Login failed', e.status === 401 ? 'Invalid username or password.' : e.message);
     } finally {
       loadingRef.current = false;
       setLoading(false);
     }
   };
 
+  const sidePad = wide ? 75 : 24;
+
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <LinearGradient colors={gradients.hero} style={StyleSheet.absoluteFill} />
-      <View style={styles.inner}>
-      <FadeInView style={styles.header}>
-        <LinearGradient colors={gradients.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.logo}>
-          <Text style={styles.logoText}>HR</Text>
-        </LinearGradient>
-        <Text style={styles.title}>HR Manager</Text>
-        <Text style={styles.subtitle}>Employee & Salary Analytics System</Text>
-      </FadeInView>
+    <View style={styles.container}>
+      <VideoBackground />
+      {/* side + bottom fades keep the type readable over the video */}
+      <LinearGradient
+        colors={wide ? ['rgba(5,5,5,0.88)', 'rgba(5,5,5,0.55)', 'rgba(5,5,5,0.05)'] : ['rgba(5,5,5,0.78)', 'rgba(5,5,5,0.5)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
+      <LinearGradient
+        colors={['rgba(5,5,5,0)', 'rgba(5,5,5,0.55)', '#050505']}
+        locations={[0.55, 0.82, 1]}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
 
-      <FadeInView delay={150} style={styles.card}>
-        <Text style={styles.cardTitle}>Welcome back 👋</Text>
-        <Text style={styles.cardSubtitle}>Sign in to manage your team</Text>
-        <Text style={styles.label}>Username</Text>
-        <TextInput
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Username"
-          placeholderTextColor={colors.textMuted}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="next"
-        />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerStyle={[styles.content, { paddingHorizontal: sidePad }]}
+          keyboardShouldPersistTaps="handled"
+        >
+          <FadeInView style={styles.topbar}>
+            <BrandMark />
+          </FadeInView>
 
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="••••••••"
-          placeholderTextColor={colors.textMuted}
-          secureTextEntry
-          autoCapitalize="none"
-          returnKeyType="go"
-          onSubmitEditing={handleLogin}
-        />
+          <View style={styles.hero}>
+            <FadeInView delay={60}>
+              <Text style={[styles.headline, wide && styles.headlineWide]}>The Next Layer</Text>
+              <Text style={[styles.headline, wide && styles.headlineWide]}>of Intelligence</Text>
+            </FadeInView>
 
-        <GradientButton title="Log in" onPress={handleLogin} loading={loading} style={{ marginTop: 24 }} />
-      </FadeInView>
+            <FadeInView delay={140}>
+              <Text style={styles.sub}>
+                HR Manager &amp; Salary Analytics — manage your team and see your salary structure in one place.
+              </Text>
+            </FadeInView>
 
-      <Text style={styles.footer}>API: {API_URL}</Text>
-      </View>
-    </KeyboardAvoidingView>
+            <FadeInView delay={220} style={styles.form}>
+              <TextInput
+                style={styles.input}
+                value={username}
+                onChangeText={setUsername}
+                placeholder="Username"
+                placeholderTextColor={colors.strip}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="next"
+              />
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password"
+                placeholderTextColor={colors.strip}
+                secureTextEntry
+                autoCapitalize="none"
+                returnKeyType="go"
+                onSubmitEditing={handleLogin}
+              />
+              <GradientButton title="Get Started" onPress={handleLogin} loading={loading} style={styles.cta} />
+            </FadeInView>
+          </View>
+
+          <FadeInView delay={340}>
+            <Text style={styles.footer}>API: {API_URL}</Text>
+          </FadeInView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg, justifyContent: 'center' },
-  inner: { padding: 24, width: '100%', maxWidth: 440, alignSelf: 'center' },
-  header: { alignItems: 'center', marginBottom: 32 },
-  logo: {
-    width: 72,
-    height: 72,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  logoText: { color: '#fff', fontSize: 28, fontWeight: '800' },
-  title: { color: colors.text, fontSize: 28, fontWeight: '800' },
-  subtitle: { color: colors.textMuted, fontSize: 14, marginTop: 6 },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 24,
-    padding: 22,
-    ...shadow,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  cardTitle: { color: colors.text, fontSize: 20, fontWeight: '800' },
-  cardSubtitle: { color: colors.textMuted, fontSize: 13, marginTop: 4, marginBottom: 8 },
-  label: { color: colors.textMuted, fontSize: 13, marginBottom: 6, marginTop: 8, fontWeight: '600' },
+  container: { flex: 1, backgroundColor: colors.bg },
+  content: { flexGrow: 1, paddingTop: 27, paddingBottom: 28 },
+  topbar: { height: 49, justifyContent: 'center' },
+  hero: { flex: 1, justifyContent: 'center', paddingVertical: 32, maxWidth: 560 },
+  headline: { color: colors.text, fontSize: 38, lineHeight: 44, fontWeight: '400', letterSpacing: 0.3 },
+  headlineWide: { fontSize: 62, lineHeight: 70 },
+  sub: { color: colors.textMuted, fontSize: 16, lineHeight: 24, marginTop: 18, maxWidth: 440 },
+  form: { marginTop: 28, maxWidth: 360 },
   input: {
-    backgroundColor: colors.bg,
-    color: colors.text,
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderColor: 'rgba(255,255,255,0.14)',
+    borderRadius: 999,
+    paddingHorizontal: 20,
+    paddingVertical: 13,
+    color: colors.text,
     fontSize: 16,
+    marginBottom: 12,
   },
-  footer: { color: colors.textMuted, fontSize: 11, textAlign: 'center', marginTop: 24 },
+  cta: { marginTop: 6, alignSelf: 'flex-start', minWidth: 190 },
+  footer: { color: colors.strip, fontSize: 11 },
 });

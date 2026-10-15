@@ -10,7 +10,7 @@ export default function EmployeeCard({ employee, busy, onToggle, onDelete }) {
   return (
     <View style={styles.card}>
       <View style={styles.topRow}>
-        <LinearGradient colors={active ? gradients.primary : ['#6B5B2E', '#4A3F22']} style={styles.avatar}>
+        <LinearGradient colors={active ? gradients.avatar : gradients.avatarMuted} style={styles.avatar}>
           <Text style={styles.avatarText}>{(employee.name || '?').trim().charAt(0).toUpperCase()}</Text>
         </LinearGradient>
         <View style={styles.info}>
