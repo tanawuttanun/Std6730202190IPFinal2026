@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 15, 2026 at 04:30 AM
+-- Generation Time: Oct 15, 2026 at 04:53 AM
 -- Server version: 8.0.46-0ubuntu0.24.04.4
 -- PHP Version: 8.3.6
 
@@ -49,7 +49,9 @@ INSERT INTO `TanaHom_202190` (`id`, `name`, `position`, `status`, `salary`, `cre
 (5, 'Michael Brown', 'Senior Engineer', 'Active', 48000.00, '2026-10-15 03:14:42', '2026-10-15 03:14:42'),
 (6, 'Nida Srisuk', 'Accountant', 'Active', 21000.00, '2026-10-15 03:14:42', '2026-10-15 03:14:42'),
 (7, 'David Lee', 'Engineering Director', 'On Leave', 92000.00, '2026-10-15 03:14:42', '2026-10-15 03:14:42'),
-(8, 'Kanya Wong', 'UX Designer', 'Active', 42000.00, '2026-10-15 03:14:42', '2026-10-15 03:14:42');
+(8, 'Kanya Wong', 'UX Designer', 'Active', 42000.00, '2026-10-15 03:14:42', '2026-10-15 03:14:42'),
+(18, 'Jay Spcae Y', 'OSPL', 'On Leave', 250.00, '2026-10-15 04:44:30', '2026-10-15 04:45:36'),
+(19, 'San', 'CEO', 'Active', 500000.00, '2026-10-15 04:45:52', '2026-10-15 04:45:52');
 
 --
 -- Indexes for dumped tables
@@ -69,7 +71,7 @@ ALTER TABLE `TanaHom_202190`
 -- AUTO_INCREMENT for table `TanaHom_202190`
 --
 ALTER TABLE `TanaHom_202190`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
