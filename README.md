@@ -8,7 +8,8 @@ Final Exam: Internet Programming (2026) — Express.js backend + React Native (E
 Std6730202190IPFinal2026
 ├── backend                        Express.js REST API
 │   ├── .env.example               optional settings (copy to .env)
-│   ├── database/schema.sql        MySQL table + seed data (for phpMyAdmin)
+│   ├── database/schema.sql        MySQL table + seed data (safe to re-run)
+│   ├── database/TanaHom_202190.sql  phpMyAdmin export of the table (structure + data)
 │   ├── server.js                  entry point (node server.js) -> src/server.js
 │   ├── src
 │   │   ├── server.js              picks storage, starts HTTP server
@@ -54,6 +55,8 @@ Without a `backend/.env` file the API keeps data in an in-memory array, as requi
 (data resets on restart). To use MySQL instead:
 
 1. Run `backend/database/schema.sql` in phpMyAdmin (or let the backend create the table itself).
+   `backend/database/TanaHom_202190.sql` is the phpMyAdmin export of the same table; import it into an
+   empty database (it uses plain `CREATE TABLE`, so it fails if the table already exists).
 2. Copy `backend/.env.example` to `backend/.env` and fill in `DB_PASSWORD`.
 3. `npm start` — the log shows `Storage: MySQL ...`.
 
