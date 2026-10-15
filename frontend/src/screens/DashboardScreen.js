@@ -25,6 +25,10 @@ import { FadeInView, PressableScale } from '../components/common/Motion';
 import ChartCard from '../components/charts/ChartCard';
 import StatusDonut from '../components/charts/StatusDonut';
 
+// Re-fetch the list periodically so changes made elsewhere (another device,
+// phpMyAdmin) appear without a manual refresh.
+const AUTO_REFRESH_MS = 10000;
+
 export default function DashboardScreen({ navigation }) {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -102,6 +106,14 @@ export default function DashboardScreen({ navigation }) {
       .health()
       .then((res) => setStorage(res?.storage || null))
       .catch(() => {});
+  }, [fetchEmployees]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Skip while a toggle/delete is in flight to avoid flicker.
+      if (busyRef.current.size === 0) fetchEmployees();
+    }, AUTO_REFRESH_MS);
+    return () => clearInterval(timer);
   }, [fetchEmployees]);
 
   const onRefresh = async () => {
@@ -251,7 +263,7 @@ export default function DashboardScreen({ navigation }) {
           {storage && (
             <View style={styles.chip}>
               <Text style={styles.chipText}>
-                {storage === 'mysql' ? '● Live: MySQL database' : '● In-memory data (resets on server restart)'}
+                {storage === 'mysql' ? '● Live: MySQL database' : '● In-memory data (resets on server restart)'} · auto-refresh 10s
               </Text>
             </View>
           )}

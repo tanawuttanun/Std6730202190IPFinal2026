@@ -20,9 +20,10 @@ module.exports = {
   port: Number(env.PORT) || 3000,
 
   auth: {
-    // Fixed credentials required by the exam specification.
-    username: 'admin',
-    password: 'password123',
+    // Defaults are the credentials required by the exam specification;
+    // AUTH_USERNAME / AUTH_PASSWORD in .env override them (e.g. on a deployed server).
+    username: env.AUTH_USERNAME || 'admin',
+    password: env.AUTH_PASSWORD || 'password123',
     token: 'mock-jwt-token',
     // true -> /api/employees* requires "Authorization: Bearer mock-jwt-token"
     required: env.REQUIRE_AUTH === 'true',

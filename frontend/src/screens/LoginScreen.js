@@ -73,7 +73,7 @@ export default function LoginScreen({ navigation }) {
           style={styles.input}
           value={username}
           onChangeText={setUsername}
-          placeholder="admin"
+          placeholder="Username"
           placeholderTextColor={colors.textMuted}
           autoCapitalize="none"
           autoCorrect={false}

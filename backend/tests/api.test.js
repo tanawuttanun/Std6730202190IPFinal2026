@@ -201,3 +201,27 @@ test('unreachable MySQL falls back to in-memory instead of crashing', async () =
     for (const k of ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_NAME', 'DB_REQUIRED', 'DB_CONNECT_TIMEOUT_MS']) delete process.env[k];
   }
 });
+
+test('AUTH_USERNAME / AUTH_PASSWORD override the default login', async () => {
+  const sep = require('path').sep;
+  const clear = () => {
+    for (const key of Object.keys(require.cache)) if (key.includes(`${sep}src${sep}`)) delete require.cache[key];
+  };
+  Object.assign(process.env, { AUTH_USERNAME: 'Admin', AUTH_PASSWORD: '1234' });
+  clear();
+  try {
+    const { createApp: makeApp } = require('../src/app');
+    const { createMemoryEmployeeRepository: makeRepo } = require('../src/repositories/memoryEmployeeRepository');
+    const srv = makeApp(makeRepo(), { logRequests: false }).listen(0);
+    await new Promise((r) => srv.once('listening', r));
+    const url = `http://127.0.0.1:${srv.address().port}/api/login`;
+    const post = (body) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    assert.equal((await post({ username: 'Admin', password: '1234' })).status, 200);
+    assert.equal((await post({ username: 'admin', password: 'password123' })).status, 401);
+    srv.close();
+  } finally {
+    delete process.env.AUTH_USERNAME;
+    delete process.env.AUTH_PASSWORD;
+    clear();
+  }
+});
