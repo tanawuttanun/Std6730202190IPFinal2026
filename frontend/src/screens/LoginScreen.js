@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,7 +17,6 @@ import { colors } from '../constants/theme';
 import { validateLogin } from '../utils/validation';
 import { showAlert } from '../utils/alert';
 import GradientButton from '../components/common/GradientButton';
-import BrandMark from '../components/common/BrandMark';
 import VideoBackground from '../components/common/VideoBackground';
 import { FadeInView } from '../components/common/Motion';
 
@@ -79,14 +79,15 @@ export default function LoginScreen({ navigation }) {
           contentContainerStyle={[styles.content, { paddingHorizontal: sidePad }]}
           keyboardShouldPersistTaps="handled"
         >
-          <FadeInView style={styles.topbar}>
-            <BrandMark />
-          </FadeInView>
-
           <View style={styles.hero}>
             <FadeInView delay={60}>
-              <Text style={[styles.headline, wide && styles.headlineWide]}>The Next Layer</Text>
-              <Text style={[styles.headline, wide && styles.headlineWide]}>of Intelligence</Text>
+              <Image
+                source={require('../../assets/hr-logo.png')}
+                style={[styles.logo, wide && styles.logoWide]}
+                resizeMode="contain"
+                accessibilityLabel="HR Management System logo"
+              />
+              <Text style={[styles.headline, wide && styles.headlineWide]}>HR MANAGEMENT SYSTEM</Text>
             </FadeInView>
 
             <FadeInView delay={140}>
@@ -133,10 +134,12 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { flexGrow: 1, paddingTop: 27, paddingBottom: 28 },
-  topbar: { height: 49, justifyContent: 'center' },
   hero: { flex: 1, justifyContent: 'center', paddingVertical: 32, maxWidth: 560 },
-  headline: { color: colors.text, fontSize: 38, lineHeight: 44, fontWeight: '400', letterSpacing: 0.3 },
-  headlineWide: { fontSize: 62, lineHeight: 70 },
+  // 560x440 crop of the HR logo (aspect 1.273)
+  logo: { width: 190, height: 149, marginLeft: -6, marginBottom: 14 },
+  logoWide: { width: 260, height: 204 },
+  headline: { color: colors.text, fontSize: 20, lineHeight: 28, fontWeight: '500', letterSpacing: 4 },
+  headlineWide: { fontSize: 26, lineHeight: 34, letterSpacing: 6 },
   sub: { color: colors.textMuted, fontSize: 16, lineHeight: 24, marginTop: 18, maxWidth: 440 },
   form: { marginTop: 28, maxWidth: 360 },
   input: {
